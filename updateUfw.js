@@ -69,5 +69,6 @@ async.series({
   }
 }, function allDone(err) {
   if (err) console.log('Operation failed with', err)
-  else console.log('UFW rules updated')
+  else if (!dryRun) console.log('UFW rules updated')
+  else console.log('Operation DRY RUN ended successfully')
 })
