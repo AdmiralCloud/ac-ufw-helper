@@ -4,7 +4,7 @@ const async = require('async')
 const request = require('request');
 const fs = require('fs')
 
-const ipList = './ipLists/pingdom.txt'
+const ipList = './publicIPlists/pingdom.txt'
 const rssUrl = 'https://my.pingdom.com/probes/feed'
 const filter = ['EU']
 
