@@ -28,7 +28,7 @@ async.series({
             let region = _.first(_.get(item, 'pingdom:region'))
             let ip = _.first(_.get(item, 'pingdom:ip'))
             if (_.indexOf(filter, region) > -1) {
-              ips.push(ip)
+              ips.push(ip + ' Pingdom')
             }
           })
           return done()

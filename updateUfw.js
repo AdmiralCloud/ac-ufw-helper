@@ -32,15 +32,19 @@ async.series({
         console.log('STARTING NEW FILE')
         console.log('Reading from %s', list)
         console.log('')
-        _.forEach(_.split(result, '\n'), (ip) => {
-          if (_.startsWith(ip, '#')) {
+        _.forEach(_.split(result, '\n'), (row) => {
+          if (_.startsWith(row, '#')) {
             // this is a comment -> just write it to console
             console.log('')
-            console.log(ip)
+            console.log(row)
           }
-          else if (ip) {
-            console.log('Adding %s', ip)
-            ips.push(_.trim(ip))  
+          else if (row) {
+            let rowParts = _.split(row, ' ', 2)
+            let ip = _.trim(_.first(rowParts))
+            let comment = _.trim(_.last(rowParts))
+            if (ip === comment) comment = null
+            console.log('Adding %s', ip, (comment ? ' for ' + comment : ''))
+            ips.push({ ip, comment })  
           }
         })
         console.log(_.repeat('-', 40))
@@ -62,9 +66,11 @@ async.series({
     console.log(_.repeat('*', 80))
     console.log('')
     async.eachSeries(ips, function(ip, itDone) {
-      console.log('ufw allow from %s to any port 443', ip)
+      let command = 'ufw allow from ' + ip.ip + ' to any port 443'
+      if (ip.comment) command += ' comment \'' + ip.comment + '\'' 
+      console.log(command)
       if (dryRun) return itDone()
-      exec('ufw allow from ' + ip + ' to any port 443', itDone)
+      exec(command, itDone)
     }, done)
   }
 }, function allDone(err) {
