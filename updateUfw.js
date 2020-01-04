@@ -4,18 +4,21 @@ const fs = require('fs')
 const exec = require('child_process').exec;
 
 const directories = ['publicIPlists', 'privateIPlists']
+const argv = require('minimist')(process.argv.slice(2));
 
-const dryRun = process.argv[2] // --dryRun
+const dryRun = _.get(argv, 'dryRun') // --dryRun
 if (dryRun) console.log('RUNNING IN DRY-RUN MODE - NOTHING WILL CHANGE')
+
+const port = _.get(argv, 'port', 443)
 
 let lists = []
 let ips = []
 async.series({
-  loadPrivateLists: function(done) {
+  loadPrivateLists: (done) => {
     async.eachSeries(directories, (dir, dirDone) => {
       let baseDir = __dirname + '/' + dir
       const listFiles = fs.readdirSync(baseDir)
-      listFiles.forEach(function (file) {
+      listFiles.forEach((file) => {
         if (file !== '.') {
           lists.push('./' + dir + '/' + file)
         }
@@ -23,7 +26,7 @@ async.series({
       return dirDone()  
     }, done)
   },
-  loadLists: function(done) {
+  loadLists: (done) => {
     async.eachSeries(lists, (list, itDone) => {
       if (!list) return itDone()
       fs.readFile(list, 'utf-8', (err, result) => {
@@ -52,29 +55,29 @@ async.series({
       })
     }, done)
   },
-  removeEntriesFromUFW: function(done) {
+  removeEntriesFromUFW: (done) => {
     // delete all rules for port 443 (these are the one's added)
     console.log('')
     console.log(_.repeat('*', 80))
     console.log('')
-    console.log("Deleting all UFW rules with port 443 - 'anywhere rules' are kept untouched!")
+    console.log("Deleting all UFW rules with port " + port + " - 'anywhere rules' are kept untouched!")
     if (dryRun) return done()
-    exec('ufw --force delete $(ufw status numbered |(grep \'443\'|awk -F"[][]" \'{print $2}\'))\n', done)
+    exec('ufw --force delete $(ufw status numbered |(grep \'" + port +"\'|awk -F"[][]" \'{print $2}\'))\n', done)
   },
-  addEntriesToUFW: function(done) {
+  addEntriesToUFW: (done) => {
     console.log('')
     console.log(_.repeat('*', 80))
     console.log('')
-    async.eachSeries(ips, function(ip, itDone) {
-      let command = 'ufw allow from ' + ip.ip + ' to any port 443'
+    async.eachSeries(ips, (ip, itDone) => {
+      let command = 'ufw allow from ' + ip.ip + ' to any port ' + port
       if (ip.comment) command += ' comment \'' + ip.comment + '\'' 
       console.log(command)
       if (dryRun) return itDone()
       exec(command, itDone)
     }, done)
   }
-}, function allDone(err) {
+}, (err) => {
   if (err) console.log('Operation failed with', err)
-  else if (!dryRun) console.log('UFW rules updated')
+  else if (!dryRun) console.log('UFW rules updated for port &s', port)
   else console.log('Operation DRY RUN ended successfully')
 })
