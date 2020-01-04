@@ -11,7 +11,7 @@ if (dryRun) console.log('RUNNING IN DRY-RUN MODE - NOTHING WILL CHANGE')
 
 const port = _.get(argv, 'port', 443)
 const list = _.get(argv, 'list')
-const remove = _.get(arv, 'remove')
+const remove = _.get(argv, 'remove')
 
 let lists = []
 let ips = []
