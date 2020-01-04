@@ -27,7 +27,12 @@ Update UFW using node updateUfw.js.
 
 Option  "dry run"
 ```
-node updateUfw.js --dry-run
+node updateUfw.js [--dry-run] [--port 443] [--list pingdom.txt] 
+```
+
+You can also remove all entries for a given port 
+```
+node updateUfw.js --remove [--port 443]
 ```
 
 Attention - during the process all existing rules for port 443 are deleted. Make sure to add your personal IP with access to all ports (anywhere) or any other port than only 443.

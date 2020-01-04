@@ -10,16 +10,19 @@ const dryRun = _.get(argv, 'dryRun') // --dryRun
 if (dryRun) console.log('RUNNING IN DRY-RUN MODE - NOTHING WILL CHANGE')
 
 const port = _.get(argv, 'port', 443)
+const list = _.get(argv, 'list')
+const remove = _.get(arv, 'remove')
 
 let lists = []
 let ips = []
 async.series({
   loadPrivateLists: (done) => {
+    if (remove) return done()
     async.eachSeries(directories, (dir, dirDone) => {
       let baseDir = __dirname + '/' + dir
       const listFiles = fs.readdirSync(baseDir)
       listFiles.forEach((file) => {
-        if (file !== '.') {
+        if (file !== '.' && (!list || file === list )) {
           lists.push('./' + dir + '/' + file)
         }
       })
@@ -27,6 +30,7 @@ async.series({
     }, done)
   },
   loadLists: (done) => {
+    if (remove) return done()
     async.eachSeries(lists, (list, itDone) => {
       if (!list) return itDone()
       fs.readFile(list, 'utf-8', (err, result) => {
@@ -65,6 +69,7 @@ async.series({
     exec('ufw --force delete $(ufw status numbered |(grep \'" + port +"\'|awk -F"[][]" \'{print $2}\'))\n', done)
   },
   addEntriesToUFW: (done) => {
+    if (remove) return done()
     console.log('')
     console.log(_.repeat('*', 80))
     console.log('')
@@ -77,7 +82,8 @@ async.series({
     }, done)
   }
 }, (err) => {
-  if (err) console.log('Operation failed with', err)
-  else if (!dryRun) console.log('UFW rules updated for port &s', port)
-  else console.log('Operation DRY RUN ended successfully')
+  if (err) console.log('UFW | Operation failed with %j', err)
+  else if (remove) console.log('UFW | Removed all entries for port %s', port)
+  else if (!dryRun) console.log('UFW | Rules updated for port %s', port)
+  else console.log('UFW | Operation DRY RUN ended successfully')
 })
