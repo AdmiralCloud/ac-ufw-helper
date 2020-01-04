@@ -66,7 +66,19 @@ async.series({
     console.log('')
     console.log("Deleting all UFW rules with port " + port + " - 'anywhere rules' are kept untouched!")
     if (dryRun) return done()
-    exec('ufw --force delete $(ufw status numbered |(grep \'" + port +"\'|awk -F"[][]" \'{print $2}\'))\n', done)
+
+    const regex = /\[\s{0,1}(\d{1,3})\]/
+    exec('ufw status numbered | grep ' + port, (err, result) => {
+      if (err) return done(err)
+      let rows = _.reverse(_.split(result, '\n'))
+      async.eachSeries(rows, (row, itDone) => {
+        let test = regex.exec(row)
+        let entry = _.get(test, '[1]')
+        if (!entry) return itDone()
+        console.log('Deleting rule %s', entry)
+        exec('"ufw" --force delete ' + entry, itDone)
+      }, done)
+    })
   },
   addEntriesToUFW: (done) => {
     if (remove) return done()
