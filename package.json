@@ -7,7 +7,7 @@
     "async": "^3.1.0",
     "feed-read-parser": "^1.0.5",
     "lodash": "^4.17.10",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "request": "^2.87.0",
     "rss-to-json": "^1.0.4",
     "superagent": "^5.1.3",
