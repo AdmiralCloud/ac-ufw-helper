@@ -8,6 +8,8 @@ const ipList = './publicIPlists/pingdom.txt'
 const rssUrl = 'https://my.pingdom.com/probes/feed'
 const filter = ['EU']
 
+console.log('Collecting Pingdom IPs with region %j', filter)
+
 let ips = []
 async.series({
   getList: function(done) {
@@ -34,7 +36,8 @@ async.series({
           return done()
         });
 
-      } else {
+      }
+ else {
         return done('error')
       }
     });
