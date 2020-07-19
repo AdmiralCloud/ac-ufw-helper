@@ -6,7 +6,7 @@
   "dependencies": {
     "async": "^3.1.0",
     "feed-read-parser": "^1.0.5",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.19",
     "minimist": "^1.2.0",
     "request": "^2.87.0",
     "rss-to-json": "^1.0.4",
