@@ -1,6 +1,6 @@
 {
   "name": "ac-ufw-helper",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Adds IPs automatically to UFW",
   "main": "pingdomIPs.js",
   "dependencies": {
