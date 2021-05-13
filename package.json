@@ -4,15 +4,15 @@
   "description": "Adds IPs automatically to UFW",
   "main": "pingdomIPs.js",
   "dependencies": {
-    "async": "^3.1.0",
-    "lodash": "^4.17.20",
-    "minimist": "^1.2.0",
+    "async": "^3.2.0",
+    "lodash": "^4.17.21",
+    "minimist": "^1.2.5",
     "request": "^2.87.0",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "ac-semantic-release": "^0.2.5",
-    "eslint": "^7.18.0"
+    "ac-semantic-release": "^0.2.6",
+    "eslint": "^7.26.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
