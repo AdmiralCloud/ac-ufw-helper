@@ -69,7 +69,10 @@ async.series({
 
     const regex = /\[\s{0,1}(\d{1,3})\]/
     exec('ufw status numbered | grep ' + port, (err, result) => {
-      if (err) return done(err)
+      if (err) {
+        console.log('No rules found | %j', err)
+        return done()
+      }
       let rows = _.reverse(_.split(result, '\n'))
       async.eachSeries(rows, (row, itDone) => {
         let test = regex.exec(row)
